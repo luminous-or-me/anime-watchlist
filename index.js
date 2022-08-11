@@ -35,6 +35,22 @@ app.get('/api/anime', (req, res) => {
     res.json(anime)
 })
 
+app.get('/api/anime/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    console.log(id)
+
+    const foundAnime = anime.find(a => a.id === id)
+
+    console.log(foundAnime)
+
+    if (foundAnime) {
+        res.json(foundAnime)
+    } else {
+        res.status(404).end()
+    }
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
