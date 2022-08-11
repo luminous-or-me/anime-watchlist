@@ -1,0 +1,7 @@
+POST http://localhost:3001/api/anime
+content-type: application/json
+
+{
+    "name": "Name",
+    "link": "Link"
+}
