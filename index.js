@@ -1,8 +1,19 @@
 const express = require('express')
+const morgan = require('morgan')
 
 const app = express()
 
 app.use(express.json())
+
+morgan.token('body', (req, res) => {
+    if (req.method === 'POST') {
+        return JSON.stringify(req.body)
+    }
+
+    return " "
+})
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 let anime = [
     {
@@ -40,11 +51,7 @@ app.get('/api/anime', (req, res) => {
 app.get('/api/anime/:id', (req, res) => {
     const id = Number(req.params.id)
 
-    console.log(id)
-
     const foundAnime = anime.find(a => a.id === id)
-
-    console.log(foundAnime)
 
     if (foundAnime) {
         res.json(foundAnime)
@@ -82,8 +89,6 @@ app.post('/api/anime', (req, res) => {
         name: name,
         link: link
     }
-
-    console.log(newAnime)
 
     anime = anime.concat(newAnime)
 
