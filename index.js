@@ -31,6 +31,10 @@ app.get('/info', (req, res) => {
     res.send(body)
 })
 
+app.get('/api/anime', (req, res) => {
+    res.json(anime)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
