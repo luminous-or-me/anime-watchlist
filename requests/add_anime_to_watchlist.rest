@@ -2,6 +2,7 @@ POST http://localhost:3001/api/anime
 content-type: application/json
 
 {
-    "name": "Name",
-    "link": "Link"
+    "name": "Anime Name",
+    "link": "https://www.wcofun.com/anime/{anime_name}",
+    "watched": false
 }
