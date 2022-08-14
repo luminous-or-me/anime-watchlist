@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/anime/1
+content-type: application/json
+
+{
+    "id": 1,
+    "name": "My Hero Academia",
+    "link": "https://www.wcofun.com/anime/boku-no-hero-academia-english-subbed",
+    "watched": true
+}
