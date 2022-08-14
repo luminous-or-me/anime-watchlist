@@ -116,6 +116,16 @@ app.delete('/api/anime/:id', (req, res) => {
     res.status(204).end()
 })
 
+app.put('/api/anime/:id', (req, res) => {
+    const id = Number(req.params.id)
+
+    const newAnime = { ...req.body }
+
+    anime = anime.map(a => a.id !== id? a : newAnime)
+
+    res.json(newAnime)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
