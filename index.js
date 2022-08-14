@@ -18,18 +18,33 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 let anime = [
     {
         id: 1,
-        name: 'Demon Slayer',
-        link: 'link 1',
+        name: "My Hero Academia",
+        link: "https://www.wcofun.com/anime/boku-no-hero-academia-english-subbed",
+        watched: false
     },
     {
         id: 2,
-        name: 'My Hero Academia',
-        link: 'link 2'
+        name: "Demon Slayer",
+        link: "https://www.wcofun.com/anime/demon-slayer",
+        watched: false
     },
     {
         id: 3,
-        name: 'Cowboy Bebop',
-        link: 'link 3'
+        name: "Cowboy Bebop",
+        link: "https://www.wcofun.com/anime/cowboy-bebop",
+        watched: false
+    },
+    {
+        id: 4,
+        name: 'Steins;Gate',
+        link: 'https://www.wcofun.com/anime/steins-gate',
+        watched: true
+    },
+    {
+        id: 5,
+        name: 'Tomodachi Game',
+        link: 'https://www.wcofun.com/anime/tomodachi-game',
+        watched: true
     }
 ]
 
@@ -75,7 +90,7 @@ app.post('/api/anime', (req, res) => {
         return res.status(400).json({ error: "link missing" })
     }
 
-    
+
     if (anime.some(a => a.name === name)) {
         return res.status(400).json({
             error: 'name must be unique'
@@ -84,11 +99,7 @@ app.post('/api/anime', (req, res) => {
 
     const id = Math.floor(Math.random() * 100000)
 
-    const newAnime = {
-        id: id,
-        name: name,
-        link: link
-    }
+    const newAnime = { ...req.body, id: id }
 
     anime = anime.concat(newAnime)
 
