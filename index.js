@@ -20,39 +20,6 @@ morgan.token('body', (req, res) => {
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let anime = [
-    {
-        id: 1,
-        name: "My Hero Academia",
-        link: "https://www.wcofun.com/anime/boku-no-hero-academia-english-subbed",
-        watched: false
-    },
-    {
-        id: 2,
-        name: "Demon Slayer",
-        link: "https://www.wcofun.com/anime/demon-slayer",
-        watched: false
-    },
-    {
-        id: 3,
-        name: "Cowboy Bebop",
-        link: "https://www.wcofun.com/anime/cowboy-bebop",
-        watched: false
-    },
-    {
-        id: 4,
-        name: 'Steins;Gate',
-        link: 'https://www.wcofun.com/anime/steins-gate',
-        watched: true
-    },
-    {
-        id: 5,
-        name: 'Tomodachi Game',
-        link: 'https://www.wcofun.com/anime/tomodachi-game',
-        watched: true
-    }
-]
-
 app.get('/info', (req, res) => {
     Anime.find({})
         .then(response => response.filter(a => !a.watched))
