@@ -1,8 +1,35 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 const app = express()
+
+const animeSchema = new mongoose.Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        link: {
+            type: String,
+            required: true,
+        },
+        watched: {
+            type: Boolean,
+            required: true,
+        }
+    }
+)
+
+const Anime = mongoose.model('Anime', animeSchema)
+
+console.log('connecting to', process.env.MONGODB_URI)
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then(result => console.log('connected to MongoDB'))
+    .catch(error => console.log('error connecting to MongoDB:', error.message))
 
 app.use(cors())
 app.use(express.static('build'))
@@ -63,7 +90,8 @@ app.get('/info', (req, res) => {
 })
 
 app.get('/api/anime', (req, res) => {
-    res.json(anime)
+    Anime.find({})
+        .then(anime => res.json(anime))
 })
 
 app.get('/api/anime/:id', (req, res) => {
