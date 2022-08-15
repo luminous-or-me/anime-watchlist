@@ -54,14 +54,18 @@ let anime = [
 ]
 
 app.get('/info', (req, res) => {
-    const body = `
-    <div>
-        <h1>Anime Watchlist</h1>
-        <p>The watchlist currently has ${anime.length} entries</p>
-        <p>${new Date().toUTCString()}</p>
-    </div>
-    `
-    res.send(body)
+    Anime.find({})
+        .then(response => response.filter(a => !a.watched))
+        .then(anime => {
+            const body = `
+                <div>
+                    <h1>Anime Watchlist</h1>
+                    <p>The watchlist currently has ${anime.length} entries</p>
+                    <p>${new Date().toUTCString()}</p>
+                </div>
+                `
+                res.send(body)
+        })
 })
 
 app.get('/api/anime', (req, res) => {
@@ -107,7 +111,7 @@ app.put('/api/anime/:id', (req, res) => {
     )
         .then(result => res.json(result))
         .catch(error => res.status(400).send({ error: error.name }))
-        
+
 })
 
 const PORT = process.env.PORT || 3001
