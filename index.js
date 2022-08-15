@@ -2,34 +2,9 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
+const Anime = require('./models/anime')
 
 const app = express()
-
-const animeSchema = new mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true,
-        },
-        link: {
-            type: String,
-            required: true,
-        },
-        watched: {
-            type: Boolean,
-            required: true,
-        }
-    }
-)
-
-const Anime = mongoose.model('Anime', animeSchema)
-
-console.log('connecting to', process.env.MONGODB_URI)
-
-mongoose.connect(process.env.MONGODB_URI)
-    .then(result => console.log('connected to MongoDB'))
-    .catch(error => console.log('error connecting to MongoDB:', error.message))
 
 app.use(cors())
 app.use(express.static('build'))
@@ -107,34 +82,13 @@ app.get('/api/anime/:id', (req, res) => {
 })
 
 app.post('/api/anime', (req, res) => {
-    const { name, link } = req.body
+    const newAnime = new Anime(req.body)
 
-    if (!name && !link) {
-        return res.status(400).json({ error: "name and link missing" })
-    }
-
-    if (!name) {
-        return res.status(400).json({ error: "name missing" })
-    }
-
-    if (!link) {
-        return res.status(400).json({ error: "link missing" })
-    }
-
-
-    if (anime.some(a => a.name === name)) {
-        return res.status(400).json({
-            error: 'name must be unique'
+    newAnime.save()
+        .then(result => {
+            res.json(result)
         })
-    }
-
-    const id = Math.floor(Math.random() * 100000)
-
-    const newAnime = { ...req.body, id: id }
-
-    anime = anime.concat(newAnime)
-
-    res.json(newAnime)
+        .catch(error => res.send({ error: error.message }))
 })
 
 app.delete('/api/anime/:id', (req, res) => {
