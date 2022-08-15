@@ -100,13 +100,14 @@ app.delete('/api/anime/:id', (req, res) => {
 })
 
 app.put('/api/anime/:id', (req, res) => {
-    const id = Number(req.params.id)
-
-    const newAnime = { ...req.body }
-
-    anime = anime.map(a => a.id !== id? a : newAnime)
-
-    res.json(newAnime)
+    Anime.findByIdAndUpdate(
+        req.params.id,
+        { ...req.body },
+        { new: true, runValidators: true, context: 'query' }
+    )
+        .then(result => res.json(result))
+        .catch(error => res.status(400).send({ error: error.name }))
+        
 })
 
 const PORT = process.env.PORT || 3001
