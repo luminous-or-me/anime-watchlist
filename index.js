@@ -92,11 +92,11 @@ app.post('/api/anime', (req, res) => {
 })
 
 app.delete('/api/anime/:id', (req, res) => {
-    const id = Number(req.params.id)
-
-    anime = anime.filter(a => a.id !== id)
-
-    res.status(204).end()
+    Anime.findByIdAndDelete(req.params.id)
+        .then(result => {
+            res.status(204).end()
+        })
+        .catch(error => res.status(400).send({ error: error.message }))
 })
 
 app.put('/api/anime/:id', (req, res) => {
