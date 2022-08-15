@@ -70,15 +70,15 @@ app.get('/api/anime', (req, res) => {
 })
 
 app.get('/api/anime/:id', (req, res) => {
-    const id = Number(req.params.id)
-
-    const foundAnime = anime.find(a => a.id === id)
-
-    if (foundAnime) {
-        res.json(foundAnime)
-    } else {
-        res.status(404).end()
-    }
+    Anime.findById(req.params.id)
+        .then(result => {
+            if (result) {
+                res.json(result)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => res.status(400).send({ error: error.message }))
 })
 
 app.post('/api/anime', (req, res) => {
