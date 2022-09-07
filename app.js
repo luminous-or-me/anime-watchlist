@@ -1,13 +1,14 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
+const config = require('./utils/config')
 const morgan = require('morgan')
 const cors = require('cors')
 const animeRouter = require('./controllers/anime')
 
-console.log('connecting to', process.env.MONGODB_URI)
+console.log('connecting to', config.MONGODB_URI)
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(config.MONGODB_URI)
     .then(result => console.log('connected to MongoDB'))
     .catch(error => console.log('error connecting to MongoDB:', error.message))
 
