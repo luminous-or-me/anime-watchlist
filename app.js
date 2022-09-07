@@ -5,6 +5,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const morgan = require('morgan')
 const cors = require('cors')
+const middleware = require('./utils/middleware')
 const animeRouter = require('./controllers/anime')
 
 logger.info('connecting to', config.MONGODB_URI)
@@ -24,8 +25,10 @@ morgan.token('body', (req, res) => {
 
     return " "
 })
-
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
 app.use('/api/anime', animeRouter)
+
+app.use(middleware.errorHandler)
 
 module.exports = app
