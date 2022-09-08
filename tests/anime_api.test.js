@@ -2,46 +2,28 @@ const mongoose = require('mongoose')
 const app = require('../app')
 const supertest = require('supertest')
 const Anime = require('../models/anime')
-
+const helper = require('./test_helper')
 const api = supertest(app)
-
-const initialAnime = [
-    {
-        name: 'Anime 1',
-        link: 'url1',
-        watched: false
-    },
-    {
-        name: 'Anime 2',
-        link: 'url2',
-        watched: false,
-    },
-    {
-        name: 'Anime 3',
-        link: 'url3',
-        watched: true
-    }
-]
 
 beforeEach(async () => {
     await Anime.deleteMany({})
 
-    const animeObjects = initialAnime.map(a => new Anime(a))
+    const animeObjects = helper.initialAnime.map(a => new Anime(a))
     const promiseArray = animeObjects.map(a => a.save())
     await Promise.all(promiseArray)
 }, 25000)
 
 describe('when there are initially some animes', () => {
     test('correct number of animes is retuned', async () => {
-        const response = await api.get('/api/anime')
+        const animeInDb = await helper.animeInDb()
 
-        expect(response.body).toHaveLength(initialAnime.length)
+        expect(animeInDb).toHaveLength(helper.initialAnime.length)
     })
 
     test('an anime has id as identifier', async () => {
-        const response = await api.get('/api/anime')
+        const animeInDb = await helper.animeInDb()
 
-        expect(response.body[0].id).toBeDefined()
+        expect(animeInDb).toBeDefined()
     })
 })
 
@@ -58,9 +40,9 @@ describe('addition of a new anime', () => {
             .send(newAnime)
             .expect(201)
 
-        const response = await api.get('/api/anime')
+        const animeInDb = await helper.animeInDb()
 
-        const animeAtEnd = response.body.map(b => {
+        const animeAtEnd = animeInDb.map(b => {
             return {
                 name: b.name,
                 link: b.link,
@@ -68,7 +50,7 @@ describe('addition of a new anime', () => {
             }
         })
 
-        expect(response.body).toHaveLength(initialAnime.length + 1)
+        expect(animeAtEnd).toHaveLength(helper.initialAnime.length + 1)
         expect(animeAtEnd).toContainEqual(newAnime)
     })
 
@@ -93,9 +75,9 @@ describe('addition of a new anime', () => {
             .send(animeWithoutLink)
             .expect(400)
 
-        const response = await api.get('/api/anime')
-        
-        expect(response.body).toHaveLength(initialAnime.length)
+        const animeAtEnd = await helper.animeInDb()
+
+        expect(animeAtEnd).toHaveLength(helper.initialAnime.length)
     })
 
     test('defaults watched to false if not provided', async () => {
@@ -108,7 +90,7 @@ describe('addition of a new anime', () => {
             .post('/api/anime')
             .send(animeWithoutWatched)
             .expect(201)
-        
+
         expect(response.body.watched).toBeDefined()
         expect(response.body.watched).toBeFalsy()
     })
@@ -116,31 +98,22 @@ describe('addition of a new anime', () => {
 
 describe('deletion of an anime', () => {
     test('succeeds if anime existing', async () => {
-        let response
-        response = await api.get('/api/anime')
-        const animeAtStart = response.body
+        const animeAtStart = await helper.animeInDb()
         const animeToDelete = animeAtStart[0]
 
         await api
             .delete(`/api/anime/${animeToDelete.id.toString()}`)
             .expect(204)
-        
-        response = await api.get('/api/anime')
-        const animeAtEnd = response.body
 
-        expect(animeAtEnd).toHaveLength(initialAnime.length - 1)
+        const animeAtEnd = await helper.animeInDb()
+
+        expect(animeAtEnd).toHaveLength(helper.initialAnime.length - 1)
     })
 
     test('doesn\'t fail if anime not existing', async () => {
-        const response = await api.get('/api/anime')
-        const animeAtStart = response.body
-        const animeToBeDeleted = animeAtStart[0]
-
+        const id = await helper.nonExistingId()
         await api
-            .delete(`/api/anime/${animeToBeDeleted.id.toString()}`)
-            
-        await api
-            .delete(`/api/anime/${animeToBeDeleted.id.toString()}`)
+            .delete(`/api/anime/${id}`)
             .expect(204)
     })
 
