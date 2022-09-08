@@ -114,6 +114,43 @@ describe('addition of a new anime', () => {
     })
 })
 
+describe('deletion of an anime', () => {
+    test('succeeds if anime existing', async () => {
+        let response
+        response = await api.get('/api/anime')
+        const animeAtStart = response.body
+        const animeToDelete = animeAtStart[0]
+
+        await api
+            .delete(`/api/anime/${animeToDelete.id.toString()}`)
+            .expect(204)
+        
+        response = await api.get('/api/anime')
+        const animeAtEnd = response.body
+
+        expect(animeAtEnd).toHaveLength(initialAnime.length - 1)
+    })
+
+    test('doesn\'t fail if anime not existing', async () => {
+        const response = await api.get('/api/anime')
+        const animeAtStart = response.body
+        const animeToBeDeleted = animeAtStart[0]
+
+        await api
+            .delete(`/api/anime/${animeToBeDeleted.id.toString()}`)
+            
+        await api
+            .delete(`/api/anime/${animeToBeDeleted.id.toString()}`)
+            .expect(204)
+    })
+
+    test('fails with suitable code if id malformatted', async () => {
+        await api
+            .delete(`/api/anime/invalid_id`)
+            .expect(400)
+    })
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
