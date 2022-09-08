@@ -109,8 +109,8 @@ describe('addition of a new anime', () => {
             .send(animeWithoutWatched)
             .expect(201)
         
-        expect(response.watched).toBeDefined()
-        expect(response.watched).toBeFalsy()
+        expect(response.body.watched).toBeDefined()
+        expect(response.body.watched).toBeFalsy()
     })
 })
 

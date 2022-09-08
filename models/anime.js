@@ -12,7 +12,7 @@ const animeSchema = new mongoose.Schema(
         },
         watched: {
             type: Boolean,
-            required: true,
+            default: false
         }
     }
 )
