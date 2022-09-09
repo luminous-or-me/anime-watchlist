@@ -1,5 +1,6 @@
 POST http://localhost:3001/api/anime
 content-type: application/json
+Authorization: bearer token
 
 {
     "name": "Anime Name",
