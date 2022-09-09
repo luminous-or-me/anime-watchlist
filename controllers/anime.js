@@ -7,56 +7,40 @@ animeRouter.get('/', async (req, res) => {
 })
 
 animeRouter.get('/:id', async (req, res, next) => {
-    try {
-        const foundAnime = await Anime.findById(req.params.id)
+    const foundAnime = await Anime.findById(req.params.id)
 
-        if (foundAnime) {
-            res.json(foundAnime)
-        } else {
-            res.status(404).end()
-        }
-    } catch (error) {
-        next(error)
+    if (foundAnime) {
+        res.json(foundAnime)
+    } else {
+        res.status(404).end()
     }
 })
 
 animeRouter.post('/', async (req, res, next) => {
-    try {
-        const newAnime = new Anime(req.body)
+    const newAnime = new Anime(req.body)
 
-        const savedAnime = await newAnime.save()
+    const savedAnime = await newAnime.save()
 
-        res.status(201).json(savedAnime)
-    } catch (error) {
-        next(error)
-    }
+    res.status(201).json(savedAnime)
 })
 
 animeRouter.delete('/:id', async (req, res, next) => {
-    try {
-        await Anime.findByIdAndDelete(req.params.id)
-        res.status(204).end()
-    } catch (error) {
-        next(error)
-    }
+    await Anime.findByIdAndDelete(req.params.id)
+    res.status(204).end()
 })
 
 animeRouter.put('/:id', async (req, res, next) => {
-    try {
-        const updatedAnime = await Anime.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {
-                new: true,
-                runValidators: true,
-                context: 'query'
-            }
-        )
+    const updatedAnime = await Anime.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        }
+    )
 
-        res.json(updatedAnime)
-    } catch (error) {
-        next(error)
-    }
+    res.json(updatedAnime)
 })
 
 module.exports = animeRouter
