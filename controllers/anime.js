@@ -34,7 +34,7 @@ const getTokenFrom = req => {
 animeRouter.post('/', async (req, res, next) => {
     const body = req.body
 
-    const token = getTokenFrom(req)
+    const token = req.token
     const decodedToken = jwt.verify(token, process.env.SECRET)
     if (!decodedToken.id) {
         return res.status(401).json({
@@ -57,7 +57,7 @@ animeRouter.post('/', async (req, res, next) => {
 })
 
 animeRouter.delete('/:id', async (req, res, next) => {
-    const token = getTokenFrom(req)
+    const token = req.token
     const decodedToken = jwt.verify(token, process.env.SECRET)
 
     if (!decodedToken.id) {

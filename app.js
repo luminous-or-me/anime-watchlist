@@ -29,6 +29,8 @@ morgan.token('body', (req, res) => {
     return " "
 })
 
+app.use(middleware.tokenExtractor)
+
 app.use('/api/anime', morgan(':method :url :status :res[content-length] - :response-time ms :body'), animeRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
