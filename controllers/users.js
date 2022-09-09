@@ -3,7 +3,14 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
 usersRouter.get('/', async (req, res) => {
-    const users = await User.find({})
+    const users = await User
+        .find({})
+        .populate('anime',
+            {
+                name: 1,
+                link: 1,
+                watched: 1
+            })
     res.json(users)
 })
 

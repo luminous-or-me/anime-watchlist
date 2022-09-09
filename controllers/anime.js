@@ -1,8 +1,14 @@
 const animeRouter = require('express').Router()
 const Anime = require('../models/anime')
+const User = require('../models/user')
 
 animeRouter.get('/', async (req, res) => {
-    const anime = await Anime.find({})
+    const anime = await Anime
+        .find({})
+        .populate('user', {
+            username: 1,
+            name: 1
+        })
     res.json(anime)
 })
 
@@ -17,9 +23,18 @@ animeRouter.get('/:id', async (req, res, next) => {
 })
 
 animeRouter.post('/', async (req, res, next) => {
-    const newAnime = new Anime(req.body)
+    const user = await User.findOne({})
+
+    const newAnime = new Anime({
+        ...req.body,
+        user: user._id
+    })
 
     const savedAnime = await newAnime.save()
+
+    user.anime = user.anime.concat(savedAnime._id)
+
+    await user.save()
 
     res.status(201).json(savedAnime)
 })
