@@ -23,26 +23,17 @@ animeRouter.get('/:id', async (req, res, next) => {
     }
 })
 
-const getTokenFrom = req => {
-    const authorization = req.get('Authorization')
-
-    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-        return authorization.substring(7)
-    }
-}
-
 animeRouter.post('/', async (req, res, next) => {
-    const body = req.body
-
-    const token = req.token
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!decodedToken.id) {
-        return res.status(401).json({
-            error: 'token missing or invalid'
-        })
+    if (!req.user) {
+        return res
+            .status(401)
+            .send({
+                error: 'token missing or invalid'
+            })
     }
 
-    const user = await User.findById(decodedToken.id)
+    const user = req.user
+    const body = req.body
 
     const newAnime = new Anime({
         ...body,
@@ -57,16 +48,15 @@ animeRouter.post('/', async (req, res, next) => {
 })
 
 animeRouter.delete('/:id', async (req, res, next) => {
-    const token = req.token
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-
-    if (!decodedToken.id) {
-        return res.status(401).send({
-            error: 'token missing or invalid'
-        })
+    if (!req.user) {
+        return res
+            .status(401)
+            .send({
+                error: 'token missing or invalid'
+            })
     }
+    const user = req.user
     const anime = await Anime.findById(req.params.id)
-    const user = await User.findById(decodedToken.id)
 
     if (!anime) {
         return res.status(204).end()
