@@ -57,7 +57,32 @@ animeRouter.post('/', async (req, res, next) => {
 })
 
 animeRouter.delete('/:id', async (req, res, next) => {
+    const token = getTokenFrom(req)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!decodedToken.id) {
+        return res.status(401).send({
+            error: 'token missing or invalid'
+        })
+    }
+    const anime = await Anime.findById(req.params.id)
+    const user = await User.findById(decodedToken.id)
+
+    if (!anime) {
+        return res.status(204).end()
+    }
+
+    if (anime.user.toString() !== user._id.toString()) {
+        return res.status(401).send({
+            error: 'only the creator can delete an anime'
+        })
+    }
+
     await Anime.findByIdAndDelete(req.params.id)
+
+    user.anime = user.anime.filter(a => a.toString() !== req.params.id)
+    await user.save()
+
     res.status(204).end()
 })
 
