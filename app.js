@@ -9,6 +9,7 @@ const cors = require('cors')
 const middleware = require('./utils/middleware')
 const animeRouter = require('./controllers/anime')
 const usersRouter = require('./controllers/users')
+const loginRouter = require('./controllers/login')
 
 logger.info('connecting to', config.MONGODB_URI)
 
@@ -30,6 +31,7 @@ morgan.token('body', (req, res) => {
 
 app.use('/api/anime', morgan(':method :url :status :res[content-length] - :response-time ms :body'), animeRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/login', loginRouter)
 
 app.use(middleware.errorHandler)
 
